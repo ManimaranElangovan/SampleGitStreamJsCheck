@@ -1,3 +1,4 @@
+# .github/workflows/gitstream.yml
 name: gitStream
 on:
   pull_request:
@@ -14,6 +15,6 @@ jobs:
       - name: Checkout full history (base + head)
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0    # v. important so the action can diff with the base branch
-      - name: Run gitStream (v2)
-        uses: linear-b/gitstream-github-action@v2
+          fetch-depth: 0
+      - name: Run gitStream (v2 pinned)
+        uses: linear-b/gitstream-github-action@2.0.168
