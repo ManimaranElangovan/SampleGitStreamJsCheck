@@ -11,7 +11,9 @@ jobs:
   run-gitstream:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
+      - name: Checkout full history (base + head)
         uses: actions/checkout@v4
-      - name: Run gitStream
-        uses: linear-b/gitstream-github-action@v1
+        with:
+          fetch-depth: 0    # v. important so the action can diff with the base branch
+      - name: Run gitStream (v2)
+        uses: linear-b/gitstream-github-action@v2
