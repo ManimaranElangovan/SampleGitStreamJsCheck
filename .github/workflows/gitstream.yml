@@ -2,9 +2,11 @@ name: gitStream
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+
 permissions:
   contents: read
   pull-requests: write
+
 jobs:
   run-gitstream:
     runs-on: ubuntu-latest
@@ -12,4 +14,4 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
       - name: Run gitStream
-        uses: linear-b/gitstream-action@v1
+        uses: linear-b/gitstream-github-action@v1
