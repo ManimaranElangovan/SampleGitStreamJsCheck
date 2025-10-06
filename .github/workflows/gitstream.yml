@@ -1,5 +1,4 @@
-# .github/workflows/gitstream.yml
-name: gitStream
+name: gitStream (manual container)
 on:
   pull_request:
     types: [opened, synchronize, reopened]
@@ -9,12 +8,25 @@ permissions:
   pull-requests: write
 
 jobs:
-  run-gitstream:
+  run-gitstream-container:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout full history (base + head)
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Run gitStream (v2 pinned)
-        uses: linear-b/gitstream-github-action@2.0.168
+      - name: Run gitStream agent
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_REF: ${{ github.ref }}
+        run: |
+          docker run --rm \
+            -e GITHUB_TOKEN \
+            -e GITHUB_EVENT_PATH \
+            -e GITHUB_REPOSITORY \
+            -e GITHUB_SHA \
+            -e GITHUB_REF \
+            -v "$GITHUB_WORKSPACE":/repo \
+            gitstream/rules-engine:latest
