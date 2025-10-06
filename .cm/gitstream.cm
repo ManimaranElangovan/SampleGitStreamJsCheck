@@ -11,28 +11,26 @@ automations:
           approve_on_LGTM: false
           guidelines: |
             Review ONLY JavaScript diffs. Keep feedback focused; list at most the top 5 issues.
-            Do NOT comment on formatting, semicolons, or trivial nits.
+            Do NOT comment on formatting or trivial nits.
 
             jQuery → modern DOM:
-              - $(selector) → document.querySelector / document.querySelectorAll
+              - $(selector) → document.querySelector / querySelectorAll
               - $(el).on('evt', fn) → el.addEventListener('evt', fn)
-              - $.ajax / $.get / $.post → fetch (use AbortController for timeout)
+              - $.ajax / $.get / $.post → fetch (with AbortController for timeout)
               - $(el).addClass/removeClass/toggleClass → el.classList.add/remove/toggle
               - $(document).ready(fn) → document.addEventListener('DOMContentLoaded', fn)
-            If new jQuery is introduced, recommend a concise, inline vanilla snippet for that exact usage.
+            If new jQuery is introduced, show a concise vanilla snippet for that exact usage.
 
             Compatibility & Polyfills:
-              If the diff uses newer features (e.g., optional chaining ?. , nullish ?? ,
-              String.prototype.replaceAll, Array.prototype.flat, Promise.any / allSettled,
-              Object.hasOwn, Array.fromAsync, fetch, Intl.*), call it out.
-              Ask the author to confirm our target browsers; if any target lacks support,
-              suggest the minimal polyfill or Babel transform and name the exact feature.
+              If the diff uses newer features (e.g., ?. , ?? , replaceAll, flat, Promise.any/allSettled,
+              Object.hasOwn, Array.fromAsync, fetch, Intl.*), call it out. Ask to confirm target browsers; if a target
+              lacks support, suggest the minimal polyfill or Babel transform and name the feature.
 
             Safety & good practices:
-              - Avoid unsafe innerHTML/outerHTML/insertAdjacentHTML with untrusted data; prefer textContent/DOM APIs or a sanitizer.
-              - Prefer const/let over var; prefer === over == when not intentionally doing type coercion.
-              - Avoid eval/new Function and inline HTML event handlers (onclick=); use addEventListener.
-              - When using fetch, handle errors and timeouts; parse JSON safely.
+              - Avoid unsafe innerHTML with untrusted data; prefer textContent/DOM APIs or a sanitizer.
+              - Prefer const/let over var; prefer === over == unless coercion is intentional.
+              - Avoid eval/new Function and inline HTML handlers (onclick=); use addEventListener.
+              - With fetch, handle errors and timeouts; check res.ok before parsing.
 
   js_feature_compat_nudge:
     if:
@@ -43,10 +41,10 @@ automations:
         args:
           once: true
           comment: |
-            Compatibility heads-up: the diff includes newer JS features (e.g., `?.`, `??`, `replaceAll`, `flat`,
+            Compatibility heads-up: the diff includes newer JS features (`?.`, `??`, `replaceAll`, `flat`,
             `Promise.any/allSettled`, `Object.hasOwn`, `Array.fromAsync`, or `Intl.*`). If any supported browser lacks
-            these, please add a small polyfill or ensure our build transpiles them. A one-line note in the PR describing
-            which features you covered would help reviewers.
+            these, please add a small polyfill or ensure our build transpiles them. A one-liner in the PR describing
+            what you covered would help reviewers.
 
   js_detect_jquery:
     if:
@@ -57,9 +55,8 @@ automations:
         args:
           once: true
           comment: |
-            New jQuery usage was detected in changed JS. Our guideline is to avoid adding jQuery in new code.
-            Please refactor to modern DOM APIs (querySelector, addEventListener, fetch, classList, DOMContentLoaded).
-            If you paste a specific line here, I can suggest the vanilla equivalent.
+            New jQuery usage detected in changed JS. Please refactor to modern DOM APIs (querySelector,
+            addEventListener, fetch, classList, DOMContentLoaded). Paste a line here if you want a direct vanilla equivalent.
 
 has:
   js_changes: {{ files | filter(regex='\\.js$') | some }}
